@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import com.example.tiptime.databinding.ActivityMainBinding
 import java.text.NumberFormat
@@ -24,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Setup a click listener on the calculate button to calculate the tip
-        binding.calculateButton.setOnClickListener { calculateTip() }
+        binding.calculateButton.setOnClickListener { handleCalculateTip() }
 
         // Set up a key listener on the EditText field to listen for "enter" button presses
         binding.costOfServiceEditText.setOnKeyListener { view, keyCode, _ ->
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * Calculates the tip based on the user input.
      */
-    private fun calculateTip() {
+    private fun handleCalculateTip() {
         // Get the decimal value from the cost of service EditText field
         val stringInTextField = binding.costOfServiceEditText.text.toString()
         val cost = stringInTextField.toDoubleOrNull()
@@ -74,17 +75,12 @@ class MainActivity : AppCompatActivity() {
             else -> 0.15
         }
 
-        // Calculate the tip
-        var tip = tipPercentage * cost
-
         // If the switch for rounding up the tip toggled on (isChecked is true), then round up the
         // tip. Otherwise do not change the tip value.
         val roundUp = binding.roundUpSwitch.isChecked
-        if (roundUp) {
-            // Take the ceiling of the current tip, which rounds up to the next integer, and store
-            // the new value in the tip variable.
-            tip = kotlin.math.ceil(tip)
-        }
+
+        //Calculate tip
+        val tip = calculateTip(cost, tipPercentage, roundUp)
 
         // Display the formatted tip value onscreen
         displayTip(tip)
@@ -104,5 +100,15 @@ class MainActivity : AppCompatActivity() {
             return true
         }
         return false
+    }
+}
+
+@VisibleForTesting
+fun calculateTip(amount: Double, percent: Double, isRound: Boolean): Double {
+    val tip = amount * percent
+    return if(isRound){
+        kotlin.math.ceil(tip)
+    } else{
+        tip
     }
 }
