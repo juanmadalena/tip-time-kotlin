@@ -61,12 +61,6 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        fun getCustomTipOnEditText(): Double {
-            val tipPercentage = binding.customTipEditText.text.toString().toDoubleOrNull()
-
-            return tipPercentage?.div(100) ?: 0 as Double
-        }
-
         // Get the tip percentage based on which radio button is selected
         val tipPercentage = when (binding.tipOptions.checkedRadioButtonId) {
             R.id.option_custom -> getCustomTipOnEditText()
@@ -84,6 +78,12 @@ class MainActivity : AppCompatActivity() {
 
         // Display the formatted tip value onscreen
         displayTip(tip)
+    }
+
+    private fun getCustomTipOnEditText(): Double {
+        val tipPercentage = binding.customTipEditText.text.toString().toDoubleOrNull()
+
+        return tipPercentage?.div(100) ?: 0 as Double
     }
 
     private fun displayTip(tip: Double) {
